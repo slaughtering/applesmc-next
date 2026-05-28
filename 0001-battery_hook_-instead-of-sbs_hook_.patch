@@ -1,0 +1,47 @@
+From 533d4b0a7be7da8c19a51d0b2fb06dd521cd9eaa Mon Sep 17 00:00:00 2001
+From: omarchy-mod <omarchy@modi.fied>
+Date: Thu, 28 May 2026 21:42:18 +0800
+Subject: [PATCH 1/2] battery_hook_ instead of sbs_hook_
+
+---
+ applesmc/applesmc.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
+
+diff --git a/applesmc/applesmc.c b/applesmc/applesmc.c
+index af69736..b9de9f1 100644
+--- a/applesmc/applesmc.c
++++ b/applesmc/applesmc.c
+@@ -40,7 +40,7 @@
+ #include <linux/bits.h>
+ 
+ #include <acpi/battery.h>
+-#include <acpi/sbs.h>
++// #include <acpi/sbs.h>
+ 
+ /* data port used by Apple SMC */
+ #define APPLESMC_DATA_PORT	0x300
+@@ -1338,12 +1338,19 @@ static struct acpi_battery_hook battery_hook = {
+ 
+ static void applesmc_battery_init(void)
+ {
+-	sbs_hook_register(&battery_hook);
++	battery_hook_register(&battery_hook);
++
++	struct power_supply *bat;
++	bat = power_supply_get_by_name("BAT0");
++	if (bat) {
++		applesmc_battery_add(bat, &battery_hook);
++		power_supply_put(bat);
++	}
+ }
+ 
+ static void applesmc_battery_exit(void)
+ {
+-	sbs_hook_unregister(&battery_hook);
++	battery_hook_unregister(&battery_hook);
+ }
+ 
+ /* Create accelerometer resources */
+-- 
+2.54.0
+
