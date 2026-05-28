@@ -2,7 +2,7 @@
 
 _pkgbase=applesmc-next
 pkgname=${_pkgbase}-dkms
-pkgver=0.1.7-1
+pkgver=0.1.7.1
 pkgrel=1
 pkgdesc='Updated applesmc driver with charge threshold'
 arch=('x86_64')
