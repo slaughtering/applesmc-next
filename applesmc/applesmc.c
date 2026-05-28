@@ -40,7 +40,7 @@
 #include <linux/bits.h>
 
 #include <acpi/battery.h>
-#include <acpi/sbs.h>
+// #include <acpi/sbs.h>
 
 /* data port used by Apple SMC */
 #define APPLESMC_DATA_PORT	0x300
@@ -1338,12 +1338,19 @@ static struct acpi_battery_hook battery_hook = {
 
 static void applesmc_battery_init(void)
 {
-	sbs_hook_register(&battery_hook);
+	battery_hook_register(&battery_hook);
+
+	struct power_supply *bat;
+	bat = power_supply_get_by_name("BAT0");
+	if (bat) {
+		applesmc_battery_add(bat, &battery_hook);
+		power_supply_put(bat);
+	}
 }
 
 static void applesmc_battery_exit(void)
 {
-	sbs_hook_unregister(&battery_hook);
+	battery_hook_unregister(&battery_hook);
 }
 
 /* Create accelerometer resources */
